@@ -25,4 +25,14 @@ class Message extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function toSearchableArray()
+    {
+        return [
+            'id' => $this->id,
+            'content' => $this->content,
+            'conversation_id' => $this->conversation_id,
+            'user_id' => $this->user_id,
+        ];
+    }
 }
