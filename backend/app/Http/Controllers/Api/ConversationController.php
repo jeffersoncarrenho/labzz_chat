@@ -6,24 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\ConversationParticipant;
 use App\Http\Requests\StoreConversationRequest;
+use App\Services\ConversationService;
 
 class ConversationController extends Controller
 {
+    protected $conversationService;
+    public function __construct(ConversationService $conversationService)
+    {
+        $this->conversationService = $conversationService;
+    }
     public function store(StoreConversationRequest $request)
     {
-        $conversation = Conversation::create([
-            'type' => $request->type ?? 'private',
-            'name' => $request->name
-        ]);
-
-        foreach ($request->participants as $userId) {
-
-            ConversationParticipant::create([
-                'conversation_id' => $conversation->id,
-                'user_id' => $userId,
-                'joined_at' => now()
-            ]);
-        }
+        $conversation = $this->conversationService
+            ->createConversation($request->validated());
 
         return response()->json($conversation);
     }

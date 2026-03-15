@@ -5,16 +5,20 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Message;
 use App\Http\Requests\StoreMessageRequest;
+use App\Services\MessageService;
 
 class MessageController extends Controller
 {
+    protected $messageService;
+    public function __construct(MessageService $messageService)
+    {
+        $this->messageService = $messageService;
+    }
+
     public function store(StoreMessageRequest $request)
     {
-        $message = Message::create([
-            'conversation_id' => $request->conversation_id,
-            'user_id' => $request->user_id,
-            'content' => $request->content
-        ]);
+        $message = $this->messageService
+            ->createMessage($request->validated());
 
         return response()->json($message);
     }
