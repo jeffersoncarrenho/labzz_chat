@@ -5,11 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\ConversationParticipant;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreConversationRequest;
 
 class ConversationController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreConversationRequest $request)
     {
         $conversation = Conversation::create([
             'type' => $request->type ?? 'private',
@@ -28,7 +28,7 @@ class ConversationController extends Controller
         return response()->json($conversation);
     }
 
-    public function index(Request $request)
+    public function index(StoreConversationRequest $request)
     {
         $userId = $request->user_id;
 

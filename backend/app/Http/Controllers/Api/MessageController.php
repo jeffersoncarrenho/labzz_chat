@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Message;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreMessageRequest;
 
 class MessageController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreMessageRequest $request)
     {
         $message = Message::create([
             'conversation_id' => $request->conversation_id,
