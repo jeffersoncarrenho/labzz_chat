@@ -9,6 +9,7 @@
         "php": "^8.2",
         "elasticsearch/elasticsearch": "^8.19",
         "laravel/framework": "^12.0",
+        "laravel/passport": "^13.6",
         "laravel/reverb": "^1.0",
         "laravel/scout": "^11.0",
         "laravel/tinker": "^2.10.1",
