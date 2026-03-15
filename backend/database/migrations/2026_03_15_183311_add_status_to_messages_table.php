@@ -9,9 +9,7 @@ return new class extends Migration {
     {
         Schema::table('messages', function (Blueprint $table) {
 
-            $table->enum('status', ['sent', 'delivered', 'read'])
-                ->default('sent')
-                ->after('content');
+          $table->string('status')->default('sent')->after('content');
 
         });
     }
