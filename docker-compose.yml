@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: labzz_app
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www
+    depends_on:
+      - mysql
+      - redis
+      - elasticsearch
+
+  nginx:
+    image: nginx:latest
+    container_name: labzz_nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ./backend:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+
+  mysql:
+    image: mysql:8
+    container_name: labzz_mysql
+    environment:
+      MYSQL_DATABASE: labzz_chat
+      MYSQL_ROOT_PASSWORD: root
+
+  redis:
+    image: redis:7
+    container_name: labzz_redis
+    ports:
+      - "6379:6379"
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
+    container_name: labzz_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
