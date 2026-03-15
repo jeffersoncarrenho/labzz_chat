@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Message;
 use App\Http\Requests\StoreMessageRequest;
 use App\Services\MessageService;
+use App\Events\UserTyping;
+use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
@@ -31,5 +33,16 @@ class MessageController extends Controller
             ->paginate(20);
 
         return response()->json($messages);
+    }
+    public function typing(Request $request)
+    {
+        event(new UserTyping(
+            $request->conversation_id,
+            $request->user_id
+        ));
+
+        return response()->json([
+            'status' => 'typing event sent'
+        ]);
     }
 }
