@@ -1,162 +1,245 @@
 # Labzz Chat System
 
-Realtime chat system built for the Labzz technical challenge.
+Backend de sistema de chat em tempo real desenvolvido como desafio técnico.
 
-The project demonstrates a scalable chat architecture with real-time communication, caching, search and containerized infrastructure.
+## 🚀 Stack
 
----
-
-# Stack
-
-## Backend
-
-- PHP 8
+- PHP 8.2
 - Laravel 12
 - MySQL
 - Redis
 - Elasticsearch
 - Laravel Reverb (WebSockets)
-
-## Frontend
-
-- Next.js
-- TypeScript
-- TailwindCSS
-
-## Infrastructure
-
 - Docker
-- Nginx
 
 ---
 
-# Architecture
+# 📦 Arquitetura
 
-The system follows a service-oriented backend architecture.
+O projeto segue uma arquitetura baseada em **API REST** com separação de responsabilidades.
 
-User
+Controllers
 ↓
-Nginx
+Services
 ↓
-Laravel API
-↓
-MySQL / Redis / Elasticsearch
-↓
-WebSocket Server (Reverb)
+Models
 
-Features implemented:
+Principais módulos:
 
-- Realtime messaging via WebSockets
-- Message history with pagination
-- Message search using Elasticsearch
-- Redis caching
-- Redis queue workers
-- Message delivery status (sent, delivered, read)
-- Typing indicators
-- Dockerized development environment
-- Automated feature tests
+- Auth
+- Users
+- Conversations
+- Messages
 
 ---
 
-# Running the Project (Docker)
+# 🔐 Autenticação
 
-Clone the repository
+O sistema utiliza **OAuth2 com Laravel Passport**.
 
-```
-git clone <repo>
-cd labzz_chat
-```
+Fluxo de autenticação:
 
-Start containers
-
-```
-docker compose up -d --build
-```
-
-Enter the Laravel container
-
-```
-docker exec -it labzz_app bash
-```
-
-Install dependencies
-
-```
-composer install
-php artisan key:generate
-php artisan migrate
-```
-
-Application will be available at
-
-```
-http://localhost:8000
-```
+POST /api/v1/auth/login
+↓
+retorna login_token
+↓
+POST /api/v1/auth/2fa/verify
+↓
+retorna access_token
 
 ---
 
-# Running Tests
+# 🔑 Two Factor Authentication
 
-```
-php artisan test
-```
+O sistema utiliza **TOTP (Time-based One-Time Password)**.
 
-Tests use SQLite in-memory database.
+Compatível com:
+
+- Google Authenticator
+- Microsoft Authenticator
+- Authy
+
+Fluxo:
+
+POST /api/v1/auth/2fa/setup
+↓
+retorna secret
+↓
+registrar no app autenticador
+↓
+POST /api/v1/auth/2fa/verify
 
 ---
 
-# API Endpoints
+# 📡 API Endpoints
+
+## Auth
+
+### Login
+
+POST /api/v1/auth/login
+
+Body
+
+{
+"email": "user@email.com
+",
+"password": "password"
+}
+
+---
+
+### Verify 2FA
+
+POST /api/v1/auth/2fa/verify
+
+Body
+
+{
+"login_token": "uuid",
+"code": "123456"
+}
+
+---
+
+## Users
+
+GET /api/v1/users
+POST /api/v1/users
+
+---
+
+## Conversations
+
+GET /api/v1/conversations
+POST /api/v1/conversations
+
+---
 
 ## Messages
 
-```
+GET /api/v1/conversations/{id}/messages
 POST /api/v1/messages
-GET  /api/v1/conversations/{id}/messages
-```
-
-## Message Status
-
-```
-POST /api/v1/messages/{id}/delivered
-POST /api/v1/messages/{id}/read
-```
-
-## Search
-
-```
-GET /api/v1/messages/search?query=...
-```
-
-## Typing Indicator
-
-```
-POST /api/v1/typing
-```
 
 ---
 
-# Project Structure
+# ⚡ Realtime
 
-```
-backend
- ├ app
- │ ├ Events
- │ ├ Models
- │ ├ Services
- │ └ Http
- │
- ├ database
- ├ routes
- ├ tests
- │ ├ Feature
- │ └ Unit
- │
-docker
-docker-compose.yml
-```
+Mensagens são transmitidas em tempo real usando:
+
+Laravel Reverb
+WebSockets
+
+Eventos de chat são broadcastados para os clientes conectados.
 
 ---
 
-# Author
+# 🔍 Busca de mensagens
+
+Busca implementada usando **Elasticsearch**.
+
+Permite:
+
+- busca por conteúdo
+- busca por conversa
+- indexação de mensagens
+
+---
+
+# 🐳 Ambiente Docker
+
+Subir ambiente:
+
+docker compose up -d
+
+Containers:
+
+- nginx
+- php
+- mysql
+- redis
+- elasticsearch
+
+---
+
+# 🧪 Testes
+
+O projeto possui **Feature Tests** para os principais fluxos da API.
+
+Executar testes:
+
+php artisan test
+
+Testes implementados:
+
+- Login
+- 2FA
+- List conversations
+- Send message
+
+---
+
+# 🛠 Setup do Projeto
+
+Clone o repositório
+
+git clone https://github.com/jeffersoncarrenho/labzz_chat
+
+Entrar na pasta
+
+cd labzz_chat/backend
+
+Subir containers
+
+docker compose up -d
+
+Entrar no container
+
+docker exec -it labzz_app bash
+
+Instalar dependências
+
+composer install
+
+Rodar migrations
+
+php artisan migrate
+
+Instalar Passport
+
+php artisan passport:install
+
+---
+
+# 📊 Estrutura do Projeto
+
+app
+├── Http
+│ ├── Controllers
+│ │ ├── Api
+│ │ └── Auth
+│ ├── Requests
+│
+├── Models
+│
+├── Services
+│ ├── AuthService
+│ ├── ConversationService
+│ └── MessageService
+
+---
+
+# 📌 Melhorias futuras
+
+- Rate limiting
+- Message reactions
+- Read receipts
+- Group conversations
+- Message attachments
+- Pagination de mensagens
+
+---
+
+# 👨‍💻 Autor
 
 Jefferson Luiz Lima
