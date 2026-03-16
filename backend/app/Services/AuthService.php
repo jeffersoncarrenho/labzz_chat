@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
+
 
 class AuthService
 {
@@ -18,11 +19,7 @@ class AuthService
 
         $loginToken = Str::uuid()->toString();
 
-        Redis::setex(
-            "login_2fa:$loginToken",
-            120,
-            $user->id
-        );
+        Cache::put("login_2fa:$loginToken", $user->id, 120);
 
         return $loginToken;
     }

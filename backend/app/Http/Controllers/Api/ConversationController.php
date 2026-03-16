@@ -4,17 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
-use App\Models\ConversationParticipant;
 use App\Http\Requests\StoreConversationRequest;
 use App\Services\ConversationService;
+use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
     protected $conversationService;
+
     public function __construct(ConversationService $conversationService)
     {
         $this->conversationService = $conversationService;
     }
+
     public function store(StoreConversationRequest $request)
     {
         $conversation = $this->conversationService
@@ -23,7 +25,7 @@ class ConversationController extends Controller
         return response()->json($conversation);
     }
 
-    public function index(StoreConversationRequest $request)
+    public function index(Request $request)
     {
         $userId = $request->user_id;
 

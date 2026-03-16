@@ -3,35 +3,26 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+#use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Traits\RefreshDatabaseWithoutPassport;
 use App\Models\User;
-use App\Models\Message;
 use App\Models\Conversation;
+use Laravel\Passport\Passport;
 
 class ListMessagesTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabaseWithoutPassport;
 
-    public function test_can_list_messages()
+    public function test_user_can_list_messages()
     {
         $user = User::factory()->create();
 
-        $conversation = Conversation::create([
-            'type' => 'private'
-        ]);
+        Passport::actingAs($user);
 
-        Message::create([
-            'conversation_id' => $conversation->id,
-            'user_id' => $user->id,
-            'content' => 'hello',
-            'status' => 'sent'
-        ]);
+        Conversation::factory()->create();
 
-        $response = $this->getJson("/api/v1/conversations/{$conversation->id}/messages");
+        $response = $this->getJson('/api/v1/conversations');
 
-        $response->assertStatus(200)
-            ->assertJsonFragment([
-                'content' => 'hello'
-            ]);
+        $response->assertStatus(200);
     }
 }

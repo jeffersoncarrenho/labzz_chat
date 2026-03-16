@@ -3,17 +3,21 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+#use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Traits\RefreshDatabaseWithoutPassport;
 use App\Models\User;
 use App\Models\Conversation;
+use Laravel\Passport\Passport;
 
 class SendMessageTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabaseWithoutPassport;
 
     public function test_user_can_send_message()
     {
         $user = User::factory()->create();
+
+        Passport::actingAs($user);
 
         $conversation = Conversation::create([
             'type' => 'private'
