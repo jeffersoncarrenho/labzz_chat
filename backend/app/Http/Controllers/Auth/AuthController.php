@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
 use App\Services\TwoFactorService;
+use OpenApi\Attributes as OA;
 
 class AuthController extends Controller
 {
@@ -20,9 +21,31 @@ class AuthController extends Controller
         $this->twoFactorService = $twoFactorService;
     }
 
-    /**
-     * Step 1 - Validate credentials and return temporary login token
-     */
+    #[OA\Post(
+        path: "/auth/login",
+        tags: ["Auth"],
+        summary: "Login user",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["email", "password"],
+                properties: [
+                    new OA\Property(property: "email", type: "string", example: "user@email.com"),
+                    new OA\Property(property: "password", type: "string", example: "password")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Login successful"
+            ),
+            new OA\Response(
+                response: 401,
+                description: "Invalid credentials"
+            )
+        ]
+    )]
     public function login(Request $request)
     {
         $request->validate([
@@ -45,9 +68,24 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Step 2 - Verify 2FA code and issue OAuth token
-     */
+    #[OA\Post(
+        path: "/auth/2fa/verify",
+        tags: ["Auth"],
+        summary: "Verify two factor authentication",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ["login_token", "code"],
+                properties: [
+                    new OA\Property(property: "login_token", type: "string", example: "uuid-token"),
+                    new OA\Property(property: "code", type: "string", example: "123456")
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: "Authenticated")
+        ]
+    )]
     public function verify2FA(Request $request)
     {
         $request->validate([
