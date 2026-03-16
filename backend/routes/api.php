@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ConversationController;
 use App\Http\Controllers\Api\MessageController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Auth\TwoFactorController;
 
     Route::prefix('v1')->group(function () {
 
@@ -17,6 +18,8 @@ use App\Http\Controllers\Api\AuthController;
             Route::get('/conversations/{id}/messages', [MessageController::class, 'index']);
             Route::post('/messages', [MessageController::class, 'store']);
             Route::post('/typing', [MessageController::class, 'typing']);
+
+            Route::post('/auth/2fa/setup', [TwoFactorController::class, 'setup']);
         });
     });
 
