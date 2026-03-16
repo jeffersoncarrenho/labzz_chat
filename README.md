@@ -1,111 +1,51 @@
 # Labzz Chat System
 
-Backend de sistema de chat em tempo real desenvolvido como desafio técnico.
+Full-stack realtime chat system built as a technical challenge.
 
-## 🚀 Stack
+---
+
+# Architecture
+
+Frontend (Next.js)
+↓
+API (Laravel)
+↓
+MySQL / Redis / Elasticsearch
+
+---
+
+# Backend Stack
 
 - PHP 8.2
 - Laravel 12
 - MySQL
 - Redis
 - Elasticsearch
-- Laravel Reverb (WebSockets)
+- Laravel Passport (OAuth2)
+- WebSockets
 - Docker
 
 ---
 
-# 📦 Arquitetura
+# Frontend Stack
 
-O projeto segue uma arquitetura baseada em **API REST** com separação de responsabilidades.
-
-Controllers
-↓
-Services
-↓
-Models
-
-Principais módulos:
-
-- Auth
-- Users
-- Conversations
-- Messages
+- Next.js
+- TypeScript
+- TailwindCSS
 
 ---
 
-# 🔐 Autenticação
+# Features
 
-O sistema utiliza **OAuth2 com Laravel Passport**.
+## Authentication
 
-Fluxo de autenticação:
-
-POST /api/v1/auth/login
-↓
-retorna login_token
-↓
-POST /api/v1/auth/2fa/verify
-↓
-retorna access_token
-
----
-
-# 🔑 Two Factor Authentication
-
-O sistema utiliza **TOTP (Time-based One-Time Password)**.
-
-Compatível com:
-
-- Google Authenticator
-- Microsoft Authenticator
-- Authy
-
-Fluxo:
-
-POST /api/v1/auth/2fa/setup
-↓
-retorna secret
-↓
-registrar no app autenticador
-↓
-POST /api/v1/auth/2fa/verify
-
----
-
-# 📡 API Endpoints
-
-## Auth
-
-### Login
+OAuth2 login
 
 POST /api/v1/auth/login
 
-Body
-
-{
-"email": "user@email.com
-",
-"password": "password"
-}
-
----
-
-### Verify 2FA
+Two Factor Authentication
 
 POST /api/v1/auth/2fa/verify
-
-Body
-
-{
-"login_token": "uuid",
-"code": "123456"
-}
-
----
-
-## Users
-
-GET /api/v1/users
-POST /api/v1/users
 
 ---
 
@@ -118,128 +58,123 @@ POST /api/v1/conversations
 
 ## Messages
 
-GET /api/v1/conversations/{id}/messages
 POST /api/v1/messages
+GET /api/v1/conversations/{id}/messages
 
 ---
 
-# ⚡ Realtime
+# Realtime Chat
 
-Mensagens são transmitidas em tempo real usando:
+Messages are broadcast using WebSockets.
 
-Laravel Reverb
-WebSockets
-
-Eventos de chat são broadcastados para os clientes conectados.
+Clients subscribe to conversation channels and receive events instantly.
 
 ---
 
-# 🔍 Busca de mensagens
+# Search
 
-Busca implementada usando **Elasticsearch**.
-
-Permite:
-
-- busca por conteúdo
-- busca por conversa
-- indexação de mensagens
+Message search is powered by Elasticsearch.
 
 ---
 
-# 🐳 Ambiente Docker
+# API Documentation
 
-Subir ambiente:
+Swagger UI available at:
+
+http://localhost:8000/api/documentation
+
+---
+
+# Postman Collection
+
+Available in:
+
+/postman/LabzzChat.postman_collection.json
+
+---
+
+# Running the Backend
+
+Start docker containers
 
 docker compose up -d
 
-Containers:
-
-- nginx
-- php
-- mysql
-- redis
-- elasticsearch
-
----
-
-# 🧪 Testes
-
-O projeto possui **Feature Tests** para os principais fluxos da API.
-
-Executar testes:
-
-php artisan test
-
-Testes implementados:
-
-- Login
-- 2FA
-- List conversations
-- Send message
-
----
-
-# 🛠 Setup do Projeto
-
-Clone o repositório
-
-git clone https://github.com/jeffersoncarrenho/labzz_chat
-
-Entrar na pasta
-
-cd labzz_chat/backend
-
-Subir containers
-
-docker compose up -d
-
-Entrar no container
+Enter container
 
 docker exec -it labzz_app bash
 
-Instalar dependências
+Install dependencies
 
 composer install
 
-Rodar migrations
+Run migrations
 
 php artisan migrate
 
-Instalar Passport
+Install passport
 
 php artisan passport:install
 
+Generate swagger
+
+php artisan l5-swagger:generate
+
 ---
 
-# 📊 Estrutura do Projeto
+# Running Tests
+
+php artisan test
+
+---
+
+# Frontend Setup
+
+Create frontend project
+
+npx create-next-app@latest labzz-chat-frontend --typescript
+
+Install dependencies
+
+npm install axios socket.io-client tailwindcss
+
+Run development server
+
+npm run dev
+
+---
+
+# Project Structure
+
+Backend
 
 app
-├── Http
-│ ├── Controllers
-│ │ ├── Api
-│ │ └── Auth
-│ ├── Requests
-│
-├── Models
-│
-├── Services
-│ ├── AuthService
-│ ├── ConversationService
-│ └── MessageService
+Http
+Controllers
+Services
+Models
+
+Frontend
+
+src
+app
+components
+services
+hooks
+types
 
 ---
 
-# 📌 Melhorias futuras
+# Future Improvements
 
-- Rate limiting
 - Message reactions
-- Read receipts
+- File attachments
 - Group conversations
-- Message attachments
-- Pagination de mensagens
+- Read receipts
+- Message pagination
+- Push notifications
 
 ---
 
-# 👨‍💻 Autor
+# Author
 
 Jefferson Luiz Lima
